@@ -31,13 +31,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: s21_cat
-          path: /test-bot/s21_cat
+          path: s21_cat
 
       - name: upload artifact s21_grep
         uses: actions/upload-artifact@v4
         with:
           name: s21_grep
-          path: /test-bot/s21_grep
+          path: s21_grep
       
   unit_test:
     needs: build
@@ -55,13 +55,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: s21_cat
-          path: /test-bot/s21_cat
+          path: s21_cat
 
       - name: download artifact s21_grep
         uses: actions/download-artifact@v4
         with:
           name: s21_grep
-          path: /test-bot/s21_grep
+          path: s21_grep
 
       - name: test
         run: |
