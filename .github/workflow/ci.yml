@@ -1,0 +1,78 @@
+name: ci/cd
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: install SSH_KEY
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: build
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd test-bot
+          git pull origin main
+          cd s21_cat
+          make
+          cd ../s21_grep
+          make
+          EOF
+
+      - name: upload artifact s21_cat
+        uses: actions/upload-artifact@v3
+        with:
+          name: s21_cat
+          path: /test-bot/s21_cat
+
+      - name: upload artifact s21_grep
+        uses: actions/upload-artifact@v3
+        with:
+          name: s21_grep
+          path: /test-bot/s21_grep
+      
+  unit_test:
+    needs: build
+    runs_on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: install SSH_KEY
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: download artifact s21_cat
+        uses: actions/download-artifact@v3
+        with:
+          name: s21_cat
+          path: /test-bot/s21_cat
+
+      - name: download artifact s21_grep
+        uses: actions/download-artifact@v3
+        with:
+          name: s21_grep
+          path: /test-bot/s21_grep
+
+      - name: test
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd test-bot
+          cd s21_cat
+          chmod +x test.sh
+          ./test.sh
+          cd ../s21_grep
+          chmod +x test.sh
+          ./test.sh
+          EOF
+
+
