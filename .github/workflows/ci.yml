@@ -41,7 +41,7 @@ jobs:
       
   unit_test:
     needs: build
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
