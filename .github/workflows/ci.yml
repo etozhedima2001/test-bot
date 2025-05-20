@@ -28,13 +28,13 @@ jobs:
           EOF
 
       - name: upload artifact s21_cat
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: s21_cat
           path: /test-bot/s21_cat
 
       - name: upload artifact s21_grep
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: s21_grep
           path: /test-bot/s21_grep
@@ -52,13 +52,13 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: download artifact s21_cat
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: s21_cat
           path: /test-bot/s21_cat
 
       - name: download artifact s21_grep
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: s21_grep
           path: /test-bot/s21_grep
