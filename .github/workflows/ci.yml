@@ -60,7 +60,7 @@ jobs:
           cd ../s21_grep && ./test.sh
   
   deploy:
-    need: unit_test
+    needs: unit_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
