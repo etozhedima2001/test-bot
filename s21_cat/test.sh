@@ -7,7 +7,6 @@ FILE_TEST='testing_file.txt'
 PROGRAM="./s21_cat"
 SOURCE_FILE="s21_cat.c"
 FLAGS=(
-	"-n"
 	"-s"
 	"-t"
 	"-T"
