@@ -18,29 +18,49 @@ jobs:
 
       - name: build
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd test-bot
-          git pull origin main
-          cd s21_cat
-          make
-          cd ../s21_grep
-          make
-          EOF
+          make -C s21_cat
+          make -C s21_grep
 
       - name: upload artifact s21_cat
         uses: actions/upload-artifact@v4
         with:
           name: s21_cat
-          path: s21_cat
+          path: s21_cat/s21_cat
 
       - name: upload artifact s21_grep
         uses: actions/upload-artifact@v4
         with:
           name: s21_grep
-          path: s21_grep
+          path: s21_grep/s21_grep
       
   unit_test:
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: download artifact s21_cat
+        uses: actions/download-artifact@v4
+        with:
+          name: s21_cat
+          path: s21_cat/
+
+      - name: download artifact s21_grep
+        uses: actions/download-artifact@v4
+        with:
+          name: s21_grep
+          path: s21_grep/
+
+      - name: test
+        run: |
+          chmod +x s21_cat/test.sh
+          chmod +x s21_grep/test.sh
+          cd s21_cat && ./test.sh
+          cd ../s21_grep && ./test.sh
+  
+  deploy:
+    need: unit_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -56,23 +76,15 @@ jobs:
         with:
           name: s21_cat
           path: s21_cat
-
-      - name: download artifact s21_grep
-        uses: actions/download-artifact@v4
-        with:
-          name: s21_grep
-          path: s21_grep
-
-      - name: test
+      
+      - name: deploy-s21_cat
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd test-bot
-          cd s21_cat
-          chmod +x test.sh
-          ./test.sh
-          cd ../s21_grep
-          chmod +x test.sh
-          ./test.sh
-          EOF
+          scp -o StrictHostKeyChecking=no \
+            s21_cat/s21_cat \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/test-bot/s21_cat/
+
+          scp -o StrictHostKeyChecking=no \
+              s21_grep/s21_grep \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/test-bot/s21_grep/
 
 
