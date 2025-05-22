@@ -10,11 +10,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: install SSH_KEY
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: build
         run: |
@@ -25,13 +20,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: s21_cat
-          path: s21_cat/
+          path: s21_cat/s21_cat
 
       - name: upload artifact s21_grep
         uses: actions/upload-artifact@v4
         with:
           name: s21_grep
-          path: s21_grep/
+          path: s21_grep/s21_cat
       
   unit_test:
     needs: build
@@ -75,8 +70,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: s21_cat
-          path: s21_cat
+          path: s21_cat/
       
+      - name: download artifact s21_grep
+        uses: actions/download-artifact@v4
+        with:
+          name: s21_grep
+          path: s21_grep/
+
       - name: deploy-s21_cat
         run: |
           scp -o StrictHostKeyChecking=no \
