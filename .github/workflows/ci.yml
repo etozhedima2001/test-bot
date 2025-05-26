@@ -59,6 +59,8 @@ jobs:
         run: |
           chmod +x s21_cat/test.sh
           chmod +x s21_grep/test.sh
+          chmod +x s21_cat/s21_cat
+          chmod +x s21_grep/s21_grep
           cd s21_cat && ./test.sh
           cd ../s21_grep && ./test.sh
   
