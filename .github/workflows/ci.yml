@@ -39,13 +39,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: s21_cat
-          path: s21_cat/s21_cat
+          path: s21_cat/
 
       - name: download artifact s21_grep
         uses: actions/download-artifact@v4
         with:
           name: s21_grep
-          path: s21_grep/s21_grep
+          path: s21_grep/
+      
+      - name: debug
+        run: |
+          ls -la 
+          cd s21_cat
+          ls -la
+          cd ../s21_grep
+          ls -la
 
       - name: test
         run: |
