@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: s21_grep
-          path: s21_grep/s21_cat
+          path: s21_grep/s21_grep
       
   unit_test:
     needs: build
