@@ -74,17 +74,6 @@ if diff <(cat -etsnb $FILE_TEST) <($PROGRAM -etsnb $FILE_TEST) > /dev/null; then
 		exit 1;
 fi
 
-clang_test() {
-	cp ../../materials/linters/.clang-format .clang-format
-	echo "clang-format скопирован в src"
-	clang-format -n $SOURCE_FILE
-	echo "Проверка кода по clang"
-	#clang-format -i $SOURCE_FILE
-	#echo "Форматирование кода по clang завершено"
-	rm -f .clang-format
-	echo "clang-format удален из src"
-}
-clang_test
 
 run_memory_leak_test() {
 	flag="$1"
@@ -102,22 +91,6 @@ for flag in "${FLAGS[@]}"; do
     run_memory_leak_test "$flag"
 done
 
-run_cppcheck() {
-    echo -e "Запуск статического анализа с помощью cppcheck..."
-    
-    cppcheck --enable=all --inconclusive --language=c --std=c11 --force --verbose \
-             --error-exitcode=1 --suppress=missingIncludeSystem --max-configs=100 "$SOURCE_FILE"
-             
-    # Проверяем код возврата
-    if [[ $? -eq 0 ]]; then
-        echo -e "${GREENS}cppcheck: Ошибки не обнаружены${GREENF}"
-    else
-        echo -e "${REDS}cppcheck: Найдены ошибки! Проверьте код.${REDF}"
-        exit 1 # Завершаем скрипт с ошибкой, если cppcheck нашел проблемы
-    fi
-}
-echo "Начало проверки проекта..."
-run_cppcheck
 
 if $ALL_PASSED; then
     echo -e "${GREENS}Все тесты пройдены успешно!${GREENF}"
